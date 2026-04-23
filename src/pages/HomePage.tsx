@@ -7,10 +7,10 @@ export const HomePage: React.FC = () => {
   const popularClasses = [
     {
       id: 1,
-      name: 'Yoga Flow',
+      name: 'Spinning Intensivo',
       image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=400&h=300&fit=crop',
-      location: 'Sala A - Principal',
-      time: '08:00 AM',
+      location: 'Sala de Ciclismo',
+      time: '06:00 PM',
       duration: '60 min',
       instructor: 'María González',
       spots: 15,

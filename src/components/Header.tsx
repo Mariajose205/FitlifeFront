@@ -1,18 +1,32 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Dumbbell, Home, Calendar, MapPin, CreditCard, User, X, Menu } from 'lucide-react';
+import { Dumbbell, Home, Calendar, MapPin, CreditCard, User, X, Menu, Shield } from 'lucide-react';
+import { useRole } from '../contexts/RoleContext';
 
 export const Header: React.FC = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAdmin, isTrainer } = useRole();
   
-  const navItems = [
+  const baseNavItems = [
     { name: 'Inicio', href: '/', icon: Home },
     { name: 'Reservas', href: '/reservas', icon: Calendar },
     { name: 'Gimnasios', href: '/gimnasios', icon: MapPin },
     { name: 'Pagos', href: '/pagos', icon: CreditCard },
     { name: 'Mi Perfil', href: '/perfil', icon: User },
   ];
+
+  const adminNavItems = [
+    ...baseNavItems,
+    { name: 'Panel Admin', href: '/admin', icon: Shield },
+  ];
+
+  const trainerNavItems = [
+    ...baseNavItems,
+    { name: 'Panel Entrenador', href: '/trainer', icon: Dumbbell },
+  ];
+
+  const navItems = isAdmin ? adminNavItems : isTrainer ? trainerNavItems : baseNavItems;
 
   const isActive = (href: string) => {
     if (href === '/') {

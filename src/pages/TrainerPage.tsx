@@ -10,7 +10,7 @@ export const TrainerPage: React.FC = () => {
   const trainerData = {
     name: 'Juan Entrenador',
     email: 'trainer@fitlife.cl',
-    specialties: ['Yoga', 'Entrenamiento Funcional', 'Spinning', 'Boxing'],
+    specialties: ['Entrenamiento Funcional', 'Spinning', 'Boxing', 'HIIT'],
     experience: '5 años',
     rating: 4.8,
     totalClasses: 156,
@@ -21,10 +21,10 @@ export const TrainerPage: React.FC = () => {
   const upcomingClasses = [
     {
       id: 1,
-      name: 'Yoga Flow',
+      name: 'Spinning Intensivo',
       date: '2024-01-15',
-      time: '08:00 AM',
-      location: 'Sala A - Principal',
+      time: '06:00 PM',
+      location: 'Sala de Ciclismo',
       enrolledStudents: 12,
       maxStudents: 20,
       status: 'confirmed'

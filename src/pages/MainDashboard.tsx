@@ -23,7 +23,7 @@ export const MainDashboard: React.FC = () => {
   ];
 
   const trainers = [
-    { id: '1', name: 'María González', specialty: 'Yoga', experience: '8 años', rating: 4.9, classes: ['Yoga Flow', 'Yoga Power', 'Meditación'] },
+    { id: '1', name: 'María González', specialty: 'Spinning', experience: '8 años', rating: 4.9, classes: ['Spinning Intensivo', 'Ciclismo Indoor', 'Cardio Dance'] },
     { id: '2', name: 'Carlos Rodríguez', specialty: 'Entrenamiento Funcional', experience: '6 años', rating: 4.8, classes: ['CrossFit', 'Entrenamiento Funcional', 'HIIT'] },
     { id: '3', name: 'Ana Martínez', specialty: 'Spinning', experience: '5 años', rating: 4.7, classes: ['Spinning', 'Ciclismo Indoor', 'Cardio Dance'] },
     { id: '4', name: 'Pedro Sánchez', specialty: 'Boxing', experience: '10 años', rating: 4.9, classes: ['Boxing', 'Kickboxing', 'Defensa Personal'] },
@@ -34,7 +34,7 @@ export const MainDashboard: React.FC = () => {
   ];
 
   const classes = [
-    { id: '1', name: 'Yoga Flow', trainer: 'María González', gym: 'FitLife Vitacura', date: '2024-01-15', time: '08:00 AM', duration: '60 min', spots: 15, maxSpots: 20, level: 'Principiante' },
+    { id: '1', name: 'Spinning Intensivo', trainer: 'María González', gym: 'FitLife Vitacura', date: '2024-01-15', time: '06:00 PM', duration: '45 min', spots: 15, maxSpots: 25, level: 'Intermedio' },
     { id: '2', name: 'Spinning Intensivo', trainer: 'Ana Martínez', gym: 'FitLife Las Condes', date: '2024-01-15', time: '06:00 PM', duration: '45 min', spots: 8, maxSpots: 25, level: 'Intermedio' },
     { id: '3', name: 'Boxing', trainer: 'Pedro Sánchez', gym: 'FitLife Providencia', date: '2024-01-16', time: '07:00 PM', duration: '50 min', spots: 12, maxSpots: 15, level: 'Avanzado' },
     { id: '4', name: 'Entrenamiento Funcional', trainer: 'Carlos Rodríguez', gym: 'FitLife Ñuñoa', date: '2024-01-16', time: '10:00 AM', duration: '60 min', spots: 18, maxSpots: 20, level: 'Intermedio' },

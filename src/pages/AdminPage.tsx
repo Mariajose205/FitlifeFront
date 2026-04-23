@@ -225,7 +225,7 @@ export const AdminPage: React.FC = () => {
               {/* Classes Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
-                  { name: 'Yoga Flow', instructor: 'Ana Martínez', time: '08:00 AM', location: 'Sala A', enrolled: 15, status: 'Activa' },
+                  { name: 'Spinning Intensivo', instructor: 'Ana Martínez', time: '06:00 PM', location: 'Sala Ciclismo', enrolled: 20, status: 'Activa' },
                   { name: 'Spinning', instructor: 'Carlos Rodríguez', time: '06:00 PM', location: 'Sala Ciclismo', enrolled: 20, status: 'Activa' },
                   { name: 'Boxing', instructor: 'Miguel Ángel', time: '07:00 PM', location: 'Ring', enrolled: 12, status: 'Pendiente' },
                 ].map((classItem, index) => (

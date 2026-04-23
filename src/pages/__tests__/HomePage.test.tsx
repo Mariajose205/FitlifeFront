@@ -27,7 +27,7 @@ describe('HomePage Component', () => {
     
     // Check popular classes section
     expect(screen.getByText('Clases Populares')).toBeInTheDocument();
-    expect(screen.getByText('Yoga Flow')).toBeInTheDocument();
+    expect(screen.getByText('Spinning Intensivo')).toBeInTheDocument();
     expect(screen.getByText('Entrenamiento Funcional')).toBeInTheDocument();
     expect(screen.getByText('Spinning')).toBeInTheDocument();
   });
@@ -35,10 +35,10 @@ describe('HomePage Component', () => {
   test('displays correct class information', () => {
     renderWithRouter(<HomePage />);
     
-    // Check Yoga Flow class
-    expect(screen.getByText('Yoga Flow')).toBeInTheDocument();
-    expect(screen.getByText('Sala A - Principal')).toBeInTheDocument();
-    expect(screen.getByText('08:00 AM')).toBeInTheDocument();
+    // Check Spinning Intensivo class
+    expect(screen.getByText('Spinning Intensivo')).toBeInTheDocument();
+    expect(screen.getByText('Sala de Ciclismo')).toBeInTheDocument();
+    expect(screen.getByText('06:00 PM')).toBeInTheDocument();
     expect(screen.getByText('60 min')).toBeInTheDocument();
     expect(screen.getByText('María González')).toBeInTheDocument();
     expect(screen.getByText('15 cupos disponibles')).toBeInTheDocument();
@@ -107,11 +107,11 @@ describe('HomePage Component', () => {
     expect(heroImage).toBeInTheDocument();
     
     // Check class images
-    const yogaImage = screen.getByAltText('Yoga Flow');
+    const spinningIntensivoImage = screen.getByAltText('Spinning Intensivo');
     const functionalImage = screen.getByAltText('Entrenamiento Funcional');
     const spinningImage = screen.getByAltText('Spinning');
     
-    expect(yogaImage).toBeInTheDocument();
+    expect(spinningIntensivoImage).toBeInTheDocument();
     expect(functionalImage).toBeInTheDocument();
     expect(spinningImage).toBeInTheDocument();
   });
