@@ -1,0 +1,160 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Header } from '../components/Header';
+import { Dumbbell, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { authenticateUser, detectUserType, getUserRedirectPath, setAuthenticatedUser } from '../utils/userTypeDetection';
+
+export const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    
+    // Simulate API call
+    setTimeout(() => {
+      const user = authenticateUser(email, password);
+      
+      if (user) {
+        setAuthenticatedUser(user);
+        const redirectPath = getUserRedirectPath(user.role);
+        navigate(redirectPath);
+      } else {
+        setError('Credenciales incorrectas. Por favor, intenta nuevamente.');
+      }
+      
+      setIsLoading(false);
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen bg-secondary-50">
+      <Header />
+      
+      <main className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
+        <div className="card p-8">
+          {/* Logo */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                <Dumbbell className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-secondary-900">FitLife</span>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-2xl font-bold text-secondary-900 text-center mb-8">
+            Iniciar Sesión
+          </h1>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-secondary-700 mb-2">
+                Correo Electrónico
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-secondary-400" />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-field pl-10"
+                  placeholder="Ingresa tu correo"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-secondary-700 mb-2">
+                Contraseña
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-secondary-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input-field pl-10 pr-10"
+                  placeholder="Ingresa tu contraseña"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-secondary-400 hover:text-secondary-600" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-secondary-400 hover:text-secondary-600" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                {error}
+              </div>
+            )}
+
+            {/* Forgot Password Link */}
+            <div className="text-right">
+              <a
+                href="#"
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              >
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Ingresando...' : 'Ingresar'}
+            </button>
+          </form>
+
+          {/* Registration Link */}
+          <div className="mt-6 text-center">
+            <span className="text-sm text-secondary-600">
+              ¿No tienes cuenta?{' '}
+              <Link
+                to="/register"
+                className="text-primary-600 hover:text-primary-700 font-medium"
+              >
+                Regístrate
+              </Link>
+            </span>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
