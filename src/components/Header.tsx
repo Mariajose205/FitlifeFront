@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Dumbbell, Home, Calendar, MapPin, CreditCard, User, X, Menu } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Dumbbell, Home, Calendar, MapPin, CreditCard, User, X, Menu, LogOut } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    // Limpiar cualquier estado de autenticación local
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('authenticatedUser');
+    
+    // Redirigir al login
+    navigate('/login');
+  };
   
   const navItems = [
     { name: 'Inicio', href: '/', icon: Home },

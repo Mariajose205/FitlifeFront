@@ -36,7 +36,19 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-secondary-50">
-      <Header />
+      {/* Simple Header with Logo Only */}
+      <div className="bg-white shadow-sm border-b border-secondary-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                <Dumbbell className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-secondary-900">FitLife</span>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <main className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
         <div className="card p-8">
@@ -121,16 +133,7 @@ export const LoginPage: React.FC = () => {
               </div>
             )}
 
-            {/* Forgot Password Link */}
-            <div className="text-right">
-              <a
-                href="#"
-                className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-              >
-                ¿Olvidaste tu contraseña?
-              </a>
-            </div>
-
+            
             {/* Submit Button */}
             <button
               type="submit"
@@ -143,7 +146,7 @@ export const LoginPage: React.FC = () => {
 
           {/* Registration Link */}
           <div className="mt-6 text-center">
-            <span className="text-sm text-secondary-600">
+            <div className="text-center text-sm text-secondary-600">
               ¿No tienes cuenta?{' '}
               <Link
                 to="/register"
@@ -151,7 +154,17 @@ export const LoginPage: React.FC = () => {
               >
                 Regístrate
               </Link>
-            </span>
+            </div>
+            
+            <div className="text-center text-sm text-secondary-600">
+              ¿Olvidaste tu contraseña?{' '}
+              <Link
+                to="/forgot-password"
+                className="text-primary-600 hover:text-primary-700 font-medium"
+              >
+                Recupérala aquí
+              </Link>
+            </div>
           </div>
         </div>
       </main>

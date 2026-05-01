@@ -1,10 +1,27 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
-import { Dumbbell, User, Mail, Phone, MapPin, Calendar, Award, Activity, Clock, CreditCard, Settings, LogOut } from 'lucide-react';
+import { Dumbbell, User, Mail, Phone, MapPin, Calendar, Award, Activity, Clock, CreditCard, Settings, LogOut, AlertTriangle } from 'lucide-react';
 
 export const ProfilePage: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    // Limpiar cualquier estado de autenticación local
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('authenticatedUser');
+    
+    // Redirigir al login
+    navigate('/login');
+  };
   
   // Mock user data
   const userData = {
@@ -47,6 +64,46 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-secondary-50">
       <Header />
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold text-secondary-900 mb-2">
+                ¿Estás seguro de cerrar sesión?
+              </h3>
+              <p className="text-secondary-600">
+                Perderás el acceso a tu cuenta y deberás iniciar sesión nuevamente para continuar.
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 btn-secondary"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
         {/* Profile Header */}
@@ -77,7 +134,10 @@ export const ProfilePage: React.FC = () => {
                 <Settings className="w-4 h-4 mr-2" />
                 Editar Perfil
               </button>
-              <button className="btn-secondary text-red-600 hover:text-red-700">
+              <button 
+                onClick={handleLogout}
+                className="btn-secondary text-red-600 hover:text-red-700"
+              >
                 <LogOut className="w-4 h-4 mr-2" />
                 Cerrar Sesión
               </button>
