@@ -13,6 +13,8 @@ import { MainDashboard } from './pages/MainDashboard';
 import { ProfilePage } from './pages/ProfilePage';
 import { TrainerPage } from './pages/TrainerPage';
 import { AdminPage } from './pages/AdminPage';
+import { AdminDashboard } from './pages/AdminDashboard';
+import { TrainerDashboard } from './pages/TrainerDashboard';
 import { ReservationsPage } from './pages/ReservationsPage';
 import { GymsPage } from './pages/GymsPage';
 import { PaymentsPage } from './pages/PaymentsPage';
@@ -36,7 +38,9 @@ function App() {
                 <Route path="/dashboard" element={<MainDashboard />} />
                 <Route path="/perfil" element={<ProfilePage />} />
                 <Route path="/trainer" element={<TrainerPage />} />
+                <Route path="/trainer-dashboard" element={<TrainerDashboard />} />
                 <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/reservas" element={<ReservationsPage />} />
                 <Route path="/gimnasios" element={<GymsPage />} />
                 <Route path="/pagos" element={<PaymentsPage />} />

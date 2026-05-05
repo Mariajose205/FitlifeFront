@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Header } from '../components/Header';
 import { Dumbbell, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { authenticateUser, detectUserType, getUserRedirectPath, setAuthenticatedUser } from '../utils/userTypeDetection';
+// import { usuariosService } from '../services/api';
+import { getUserRedirectPath, setAuthenticatedUser } from '../utils/userTypeDetection';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,20 +18,78 @@ export const LoginPage: React.FC = () => {
     setIsLoading(true);
     setError('');
     
-    // Simulate API call
-    setTimeout(() => {
-      const user = authenticateUser(email, password);
+    try {
+      // Simulación de autenticación - API deshabilitada para modo local
+      // const response = await usuariosService.login({ email, password });
+      // const { token, user } = response.data;
       
-      if (user) {
-        setAuthenticatedUser(user);
-        const redirectPath = getUserRedirectPath(user.role);
+      // Usar autenticación simulada
+      const domain = email.toLowerCase().split('@')[1];
+      let role: 'admin' | 'trainer' | 'user';
+      let name: string;
+      
+      if (domain === 'fitlife.cl') {
+        if (email.toLowerCase().includes('admin')) {
+          role = 'admin';
+          name = 'Administrador FitLife';
+        } else if (email.toLowerCase().includes('trainer')) {
+          role = 'trainer';
+          name = 'Entrenador';
+        } else {
+          role = 'user';
+          name = 'Usuario';
+        }
+      } else {
+        role = 'user';
+        name = 'Usuario Normal';
+      }
+      
+      const mappedUser = {
+        id: '1',
+        email: email,
+        name: name,
+        role: role,
+        membershipType: role === 'admin' ? 'Administrador' : role === 'trainer' ? 'Entrenador' : 'Premium',
+        memberSince: new Date().toISOString().split('T')[0]
+      };
+      
+      setAuthenticatedUser(mappedUser);
+      const redirectPath = getUserRedirectPath(mappedUser.role);
+      navigate(redirectPath);
+      
+    } catch (error: any) {
+      console.error('Error de autenticación:', error);
+      
+      // Fallback a simulación si la API no está disponible
+      if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED') {
+        // Usar la lógica de simulación existente como fallback
+        const domain = email.toLowerCase().split('@')[1];
+        let role: 'admin' | 'trainer' | 'user' = 'user';
+        
+        if (domain.includes('admin') || domain === 'fitlife.cl') {
+          role = 'admin';
+        } else if (domain.includes('trainer') || domain.includes('entrenador')) {
+          role = 'trainer';
+        }
+        
+        const mockUser = {
+          id: '1',
+          email,
+          name: email.split('@')[0],
+          role,
+          membershipType: role === 'admin' ? 'Admin' : 'Premium',
+          memberSince: new Date().toISOString().split('T')[0]
+        };
+        
+        setAuthenticatedUser(mockUser);
+        const redirectPath = getUserRedirectPath(mockUser.role);
         navigate(redirectPath);
       } else {
         setError('Credenciales incorrectas. Por favor, intenta nuevamente.');
       }
-      
-      setIsLoading(false);
-    }, 1000);
+    }
+    
+    setIsLoading(false);
   };
 
   return (

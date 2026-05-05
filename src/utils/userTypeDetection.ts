@@ -32,9 +32,9 @@ export const detectUserType = (email: string): UserRole => {
 export const getUserRedirectPath = (role: UserRole): string => {
   switch (role) {
     case 'admin':
-      return '/admin';
+      return '/admin-dashboard';
     case 'trainer':
-      return '/trainer';
+      return '/trainer-dashboard';
     case 'user':
     default:
       return '/dashboard';
@@ -47,7 +47,9 @@ export const mockUsers: User[] = [
     id: '1',
     email: 'admin@fitlife.cl',
     name: 'Administrador FitLife',
-    role: 'admin'
+    role: 'admin',
+    membershipType: 'Admin',
+    memberSince: '2023-01-01'
   },
   {
     id: '2',
@@ -59,11 +61,11 @@ export const mockUsers: User[] = [
   },
   {
     id: '3',
-    email: 'maria.gonzalez@email.com',
-    name: 'María González',
+    email: 'usuario@gmail.com',
+    name: 'Usuario Normal',
     role: 'user',
-    membershipType: 'Premium',
-    memberSince: '2023-01-15'
+    membershipType: 'Básico',
+    memberSince: '2024-01-01'
   }
 ];
 

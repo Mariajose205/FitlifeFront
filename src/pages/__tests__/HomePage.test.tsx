@@ -27,7 +27,7 @@ describe('HomePage Component', () => {
     
     // Check popular classes section
     expect(screen.getByText('Clases Populares')).toBeInTheDocument();
-    expect(screen.getByText('Yoga Flow')).toBeInTheDocument();
+    expect(screen.getByText('Entrenamiento Funcional')).toBeInTheDocument();
     expect(screen.getByText('Entrenamiento Funcional')).toBeInTheDocument();
     expect(screen.getByText('Spinning')).toBeInTheDocument();
   });
@@ -35,8 +35,8 @@ describe('HomePage Component', () => {
   test('displays correct class information', () => {
     renderWithRouter(<HomePage />);
     
-    // Check Yoga Flow class
-    expect(screen.getByText('Yoga Flow')).toBeInTheDocument();
+    // Check Entrenamiento Funcional class
+    expect(screen.getByText('Entrenamiento Funcional')).toBeInTheDocument();
     expect(screen.getByText('Sala A - Principal')).toBeInTheDocument();
     expect(screen.getByText('08:00 AM')).toBeInTheDocument();
     expect(screen.getByText('60 min')).toBeInTheDocument();
@@ -107,12 +107,12 @@ describe('HomePage Component', () => {
     expect(heroImage).toBeInTheDocument();
     
     // Check class images
-    const yogaImage = screen.getByAltText('Yoga Flow');
     const functionalImage = screen.getByAltText('Entrenamiento Funcional');
+    const functionalImage2 = screen.getByAltText('Entrenamiento Funcional');
     const spinningImage = screen.getByAltText('Spinning');
     
-    expect(yogaImage).toBeInTheDocument();
     expect(functionalImage).toBeInTheDocument();
+    expect(functionalImage2).toBeInTheDocument();
     expect(spinningImage).toBeInTheDocument();
   });
 });

@@ -1,16 +1,69 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
-import { Dumbbell, User, Mail, Phone, MapPin, Calendar, Award, Activity, Clock, CreditCard, Settings, LogOut, AlertTriangle } from 'lucide-react';
+import { getAuthenticatedUser } from '../utils/userTypeDetection';
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Calendar, 
+  Award, 
+  Activity, 
+  Clock, 
+  CreditCard, 
+  Settings, 
+  LogOut,
+  AlertTriangle,
+  Camera,
+  Upload,
+  X
+} from 'lucide-react';
 
 export const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isEditingPhoto, setIsEditingPhoto] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState('/src/assets/default-avatar.png');
+
+  useEffect(() => {
+    const user = getAuthenticatedUser();
+    setCurrentUser(user);
+  }, []);
 
   const handleLogout = () => {
     setShowLogoutModal(true);
+  };
+
+  const handlePhotoEdit = () => {
+    setIsEditingPhoto(true);
+  };
+
+  const handlePhotoSave = () => {
+    setProfilePhoto(profilePhoto);
+    setIsEditingPhoto(false);
+    alert('Foto de perfil actualizada');
+  };
+
+  const handlePhotoCancel = () => {
+    setIsEditingPhoto(false);
+  };
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (result) {
+          setProfilePhoto(result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const confirmLogout = () => {
@@ -23,33 +76,76 @@ export const ProfilePage: React.FC = () => {
     navigate('/login');
   };
   
-  // Mock user data
-  const userData = {
-    name: 'María González',
-    email: 'maria.gonzalez@email.com',
-    phone: '+56 9 1234 5678',
-    birthDate: '1990-05-15',
-    address: 'Av. Providencia 1234, Santiago, Chile',
-    memberSince: '2023-01-15',
-    membershipType: 'Premium',
-    nextPayment: '2024-01-15',
+  // User data based on current authenticated user
+  const getUserData = () => {
+    if (!currentUser) {
+      // Default fallback
+      return {
+        name: 'Usuario',
+        email: 'usuario@ejemplo.com',
+        phone: '+56 9 0000 0000',
+        birthDate: '1990-01-01',
+        address: 'Dirección no especificada',
+        memberSince: '2024-01-01',
+        membershipType: 'Básico',
+        nextPayment: '2024-12-01',
+      };
+    }
+
+    switch (currentUser.role) {
+      case 'admin':
+        return {
+          name: currentUser.name || 'Administrador FitLife',
+          email: currentUser.email || 'admin@fitlife.cl',
+          phone: '+56 9 1111 1111',
+          birthDate: '1985-03-10',
+          address: 'Av. Las Condes 1000, Santiago, Chile',
+          memberSince: currentUser.memberSince || '2023-01-01',
+          membershipType: 'Administrador',
+          nextPayment: 'N/A',
+        };
+      case 'trainer':
+        return {
+          name: currentUser.name || 'Entrenador',
+          email: currentUser.email || 'trainer@fitlife.cl',
+          phone: '+56 9 2222 2222',
+          birthDate: '1990-07-15',
+          address: 'Av. Providencia 2000, Santiago, Chile',
+          memberSince: currentUser.memberSince || '2023-01-15',
+          membershipType: 'Entrenador',
+          nextPayment: 'N/A',
+        };
+      default:
+        return {
+          name: currentUser.name || 'Usuario Normal',
+          email: currentUser.email || 'usuario@gmail.com',
+          phone: '+56 9 3333 3333',
+          birthDate: '1992-05-20',
+          address: 'Av. Vitacura 3000, Santiago, Chile',
+          memberSince: currentUser.memberSince || '2024-01-01',
+          membershipType: currentUser.membershipType || 'Básico',
+          nextPayment: '2024-12-01',
+        };
+    }
   };
 
+  const userData = getUserData();
+
   const recentActivities = [
-    { id: 1, class: 'Yoga Flow', date: '2024-01-10', time: '08:00 AM', instructor: 'Ana Martínez' },
+    { id: 1, class: 'Entrenamiento Funcional', date: '2024-01-10', time: '08:00 AM', instructor: 'Ana Martínez' },
     { id: 2, class: 'Spinning', date: '2024-01-08', time: '06:00 PM', instructor: 'Carlos Rodríguez' },
     { id: 3, class: 'Entrenamiento Funcional', date: '2024-01-05', time: '10:00 AM', instructor: 'Pedro Sánchez' },
   ];
 
   const upcomingClasses = [
-    { id: 1, class: 'Yoga Flow', date: '2024-01-15', time: '08:00 AM', instructor: 'Ana Martínez', spots: 5 },
+    { id: 1, class: 'Entrenamiento Funcional', date: '2024-01-15', time: '08:00 AM', instructor: 'Ana Martínez', spots: 5 },
     { id: 2, class: 'Boxing', date: '2024-01-16', time: '07:00 PM', instructor: 'Miguel Ángel', spots: 3 },
   ];
 
   const stats = {
     totalClasses: 45,
     thisMonth: 12,
-    favoriteClass: 'Yoga Flow',
+    favoriteClass: 'Entrenamiento Funcional',
     streak: 7,
   };
 
@@ -104,14 +200,96 @@ export const ProfilePage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Photo Edit Modal */}
+      {isEditingPhoto && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-secondary-900">
+                Editar Foto de Perfil
+              </h3>
+              <button 
+                onClick={handlePhotoCancel}
+                className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="text-center mb-6">
+              <div className="mb-4">
+                <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto overflow-hidden">
+                  {profilePhoto.startsWith('data:') ? (
+                    <img 
+                      src={profilePhoto} 
+                      alt="Foto de perfil" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-16 h-16 text-gray-400" />
+                  )}
+                </div>
+              </div>
+              
+              <label className="btn-primary flex items-center gap-2 cursor-pointer">
+                <Upload className="w-4 h-4" />
+                Subir Foto
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex space-x-3">
+              <button
+                onClick={handlePhotoCancel}
+                className="flex-1 btn-secondary"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handlePhotoSave}
+                className="flex-1 btn-primary"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
         {/* Profile Header */}
         <div className="bg-white rounded-xl shadow-sm border border-secondary-200 p-6 mb-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
             {/* Avatar */}
-            <div className="w-24 h-24 bg-primary-600 rounded-full flex items-center justify-center">
-              <User className="w-12 h-12 text-white" />
+            <div className="relative">
+              <div className="w-24 h-24 bg-primary-600 rounded-full flex items-center justify-center overflow-hidden">
+                {profilePhoto.startsWith('data:') ? (
+                  <img 
+                    src={profilePhoto} 
+                    alt="Foto de perfil" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-12 h-12 text-white" />
+                )}
+              </div>
+              
+              {/* Edit Photo Button */}
+              <button 
+                onClick={handlePhotoEdit}
+                className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors duration-200"
+              >
+                <Camera className="w-4 h-4" />
+              </button>
             </div>
             
             {/* User Info */}
@@ -130,6 +308,28 @@ export const ProfilePage: React.FC = () => {
 
             {/* Quick Actions */}
             <div className="flex space-x-2">
+              {/* Admin Dashboard Button - Only show for admin users */}
+              {currentUser?.role === 'admin' && (
+                <button 
+                  onClick={() => navigate('/admin-dashboard')}
+                  className="btn-primary"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Panel de Administración
+                </button>
+              )}
+              
+              {/* Trainer Dashboard Button - Only show for trainer users */}
+              {currentUser?.role === 'trainer' && (
+                <button 
+                  onClick={() => navigate('/trainer-dashboard')}
+                  className="btn-primary"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Panel Entrenador
+                </button>
+              )}
+              
               <button className="btn-secondary">
                 <Settings className="w-4 h-4 mr-2" />
                 Editar Perfil
@@ -192,7 +392,7 @@ export const ProfilePage: React.FC = () => {
                   <div className="text-sm text-green-700">Días Seguidos</div>
                 </div>
                 <div className="bg-yellow-50 p-4 rounded-lg text-center">
-                  <Dumbbell className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
+                  <Activity className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
                   <div className="text-lg font-bold text-yellow-600">{stats.favoriteClass}</div>
                   <div className="text-sm text-yellow-700">Clase Favorita</div>
                 </div>
