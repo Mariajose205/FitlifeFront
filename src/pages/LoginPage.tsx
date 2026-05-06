@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Dumbbell, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-// import { usuariosService } from '../services/api';
+import { usuariosService } from '../services/api';
 import { getUserRedirectPath, setAuthenticatedUser } from '../utils/userTypeDetection';
 
 export const LoginPage: React.FC = () => {
@@ -19,40 +19,24 @@ export const LoginPage: React.FC = () => {
     setError('');
     
     try {
-      // Simulación de autenticación - API deshabilitada para modo local
-      // const response = await usuariosService.login({ email, password });
-      // const { token, user } = response.data;
+      // Llamada API real al MS-usuarios
+      const response = await usuariosService.login({ email, password });
+      const { token, user } = response.data;
       
-      // Usar autenticación simulada
-      const domain = email.toLowerCase().split('@')[1];
-      let role: 'admin' | 'trainer' | 'user';
-      let name: string;
-      
-      if (domain === 'fitlife.cl') {
-        if (email.toLowerCase().includes('admin')) {
-          role = 'admin';
-          name = 'Administrador FitLife';
-        } else if (email.toLowerCase().includes('trainer')) {
-          role = 'trainer';
-          name = 'Entrenador';
-        } else {
-          role = 'user';
-          name = 'Usuario';
-        }
-      } else {
-        role = 'user';
-        name = 'Usuario Normal';
-      }
-      
+      // Mapear usuario al formato esperado
       const mappedUser = {
-        id: '1',
-        email: email,
-        name: name,
-        role: role,
-        membershipType: role === 'admin' ? 'Administrador' : role === 'trainer' ? 'Entrenador' : 'Premium',
+        id: user.id.toString(),
+        email: user.email,
+        name: user.nombre,
+        role: user.rol.toLowerCase() as 'admin' | 'trainer' | 'user',
+        membershipType: user.rol === 'ADMIN' ? 'Administrador' : user.rol === 'TRAINER' ? 'Entrenador' : 'Premium',
         memberSince: new Date().toISOString().split('T')[0]
       };
       
+      // Guardar token en localStorage
+      localStorage.setItem('fitlife_token', token);
+      
+      // Guardar usuario autenticado
       setAuthenticatedUser(mappedUser);
       const redirectPath = getUserRedirectPath(mappedUser.role);
       navigate(redirectPath);
@@ -62,27 +46,37 @@ export const LoginPage: React.FC = () => {
       
       // Fallback a simulación si la API no está disponible
       if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED') {
-        // Usar la lógica de simulación existente como fallback
         const domain = email.toLowerCase().split('@')[1];
-        let role: 'admin' | 'trainer' | 'user' = 'user';
+        let role: 'admin' | 'trainer' | 'user';
+        let name: string;
         
-        if (domain.includes('admin') || domain === 'fitlife.cl') {
-          role = 'admin';
-        } else if (domain.includes('trainer') || domain.includes('entrenador')) {
-          role = 'trainer';
+        if (domain === 'fitlife.cl') {
+          if (email.toLowerCase().includes('admin')) {
+            role = 'admin';
+            name = 'Administrador FitLife';
+          } else if (email.toLowerCase().includes('trainer')) {
+            role = 'trainer';
+            name = 'Entrenador';
+          } else {
+            role = 'user';
+            name = 'Usuario';
+          }
+        } else {
+          role = 'user';
+          name = 'Usuario Normal';
         }
         
-        const mockUser = {
+        const mappedUser = {
           id: '1',
-          email,
-          name: email.split('@')[0],
-          role,
-          membershipType: role === 'admin' ? 'Admin' : 'Premium',
+          email: email,
+          name: name,
+          role: role,
+          membershipType: role === 'admin' ? 'Administrador' : role === 'trainer' ? 'Entrenador' : 'Premium',
           memberSince: new Date().toISOString().split('T')[0]
         };
         
-        setAuthenticatedUser(mockUser);
-        const redirectPath = getUserRedirectPath(mockUser.role);
+        setAuthenticatedUser(mappedUser);
+        const redirectPath = getUserRedirectPath(mappedUser.role);
         navigate(redirectPath);
       } else {
         setError('Credenciales incorrectas. Por favor, intenta nuevamente.');

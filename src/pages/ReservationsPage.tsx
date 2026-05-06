@@ -133,8 +133,8 @@ export const ReservationsPage: React.FC = () => {
         setShowBookingModal(false);
         setBookingSuccess(false);
         setSelectedClass(null);
-        // Redirect to payments after successful booking
-        window.location.href = '/pagos';
+        // Redirect to payment page with cost after successful booking
+        window.location.href = `/pago?id=${selectedClass.id}&cost=${selectedClass.price}`;
       }, 2000);
     }
   };

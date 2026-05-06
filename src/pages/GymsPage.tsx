@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { useCart } from '../contexts/CartContext';
 import { MapPin, Phone, Clock, Star, Navigation, Search, Filter, Users, Dumbbell, Check, AlertCircle, X, Map } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -529,74 +529,34 @@ export const GymsPage: React.FC = () => {
 
               {/* Map Container */}
               <div className="mb-6">
-                <div className="bg-gray-100 rounded-lg h-64 overflow-hidden">
+                <div className="bg-gray-100 rounded-lg h-96 overflow-hidden">
                   {selectedGym && (
-                    <MapContainer
-                      center={[selectedGym.coordinates.lat, selectedGym.coordinates.lng]}
-                      zoom={15}
-                      style={{ height: '100%', width: '100%' }}
-                      scrollWheelZoom={false}
-                    >
-                      <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    <div className="h-full w-full">
+                      {/* OpenStreetMap iframe - Free GPS */}
+                      <iframe
+                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedGym.coordinates.lng - 0.01},${selectedGym.coordinates.lat - 0.01},${selectedGym.coordinates.lng + 0.01},${selectedGym.coordinates.lat + 0.01}&layer=mapnik&marker=${selectedGym.coordinates.lat},${selectedGym.coordinates.lng}`}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        title={`Mapa de ${selectedGym.name}`}
                       />
-                      <MapController 
-                        center={[selectedGym.coordinates.lat, selectedGym.coordinates.lng]} 
-                        zoom={15} 
-                      />
-                      {/* Gym Marker */}
-                      <Marker 
-                        position={[selectedGym.coordinates.lat, selectedGym.coordinates.lng]}
-                        icon={gymIcon}
-                      >
-                        <Popup>
-                          <div className="text-center">
-                            <h4 className="font-semibold text-sm">{selectedGym.name}</h4>
-                            <p className="text-xs text-gray-600">{selectedGym.address}</p>
-                            <p className="text-xs text-gray-500">{selectedGym.comuna}</p>
-                          </div>
-                        </Popup>
-                      </Marker>
                       
-                      {/* User Location Marker */}
-                      {userLocation && (
-                        <Marker 
-                          position={[userLocation.lat, userLocation.lng]}
-                          icon={userIcon}
-                        >
-                          <Popup>
-                            <div className="text-center">
-                              <p className="text-xs font-semibold">Tu ubicación</p>
-                              <p className="text-xs text-gray-600">Distancia: {selectedGym.distance.toFixed(1)} km</p>
-                            </div>
-                          </Popup>
-                        </Marker>
-                      )}
-                      
-                      {/* Reservation Markers */}
-                      {cartItems.map((item, index) => (
-                        item.gymCoordinates && (
-                          <Marker 
-                            key={`reservation-${item.id}-${index}`}
-                            position={[item.gymCoordinates.lat, item.gymCoordinates.lng]}
-                            icon={reservationIcon}
-                          >
-                            <Popup>
-                              <div className="text-center">
-                                <p className="text-xs font-semibold text-amber-700">Reserva</p>
-                                <p className="text-xs font-medium">{item.name}</p>
-                                <p className="text-xs text-gray-600">{item.gym}</p>
-                                <p className="text-xs text-gray-500">{item.date} • {item.time}</p>
-                                <p className="text-xs text-amber-600 font-medium">
-                                  {item.paymentType === 'day' ? 'Diario' : item.paymentType === 'week' ? 'Semanal' : 'Mensual'}
-                                </p>
-                              </div>
-                            </Popup>
-                          </Marker>
-                        )
-                      ))}
-                    </MapContainer>
+                      {/* Gym info overlay */}
+                      <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-3 max-w-xs">
+                        <div className="flex items-center mb-2">
+                          <MapPin className="w-5 h-5 text-red-500 mr-2" />
+                          <h4 className="font-semibold text-sm">{selectedGym.name}</h4>
+                        </div>
+                        <p className="text-xs text-gray-600 mb-1">{selectedGym.address}</p>
+                        <p className="text-xs text-gray-500">{selectedGym.comuna}</p>
+                        <div className="mt-2 pt-2 border-t border-gray-200">
+                          <p className="text-xs font-medium text-gray-900">Coordenadas:</p>
+                          <p className="text-xs text-gray-600">
+                            {selectedGym.coordinates.lat.toFixed(4)}, {selectedGym.coordinates.lng.toFixed(4)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

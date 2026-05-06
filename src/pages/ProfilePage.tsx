@@ -509,7 +509,10 @@ export const ProfilePage: React.FC = () => {
                 </div>
               </div>
               
-              <button className="btn-primary">
+              <button 
+                onClick={() => navigate('/metodos-pago')}
+                className="btn-primary"
+              >
                 <CreditCard className="w-4 h-4 mr-2" />
                 Gestionar Método de Pago
               </button>

@@ -37,7 +37,7 @@ export const getUserRedirectPath = (role: UserRole): string => {
       return '/trainer-dashboard';
     case 'user':
     default:
-      return '/dashboard';
+      return '/'; // Redirigir al inicio para usuarios normales
   }
 };
 

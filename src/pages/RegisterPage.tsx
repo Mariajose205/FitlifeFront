@@ -3,10 +3,22 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { Dumbbell, Mail, Lock, User, Eye, EyeOff, Calendar, MapPin, Phone, AlertCircle } from 'lucide-react';
 import { detectUserType, getUserRedirectPath, setAuthenticatedUser } from '../utils/userTypeDetection';
+import { usuariosService } from '../services/api';
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  address: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export const RegisterPage: React.FC = () => {
   // Load saved form data from localStorage on mount
-  const [formData, setFormData] = useState(() => {
+  const [formData, setFormData] = useState<FormData>(() => {
     const savedData = localStorage.getItem('fitlife_registration_draft');
     if (savedData) {
       try {
@@ -76,7 +88,7 @@ export const RegisterPage: React.FC = () => {
     user: 'Usuario Normal'
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => {
       const newData = { ...prev, [name]: value };
@@ -93,31 +105,34 @@ export const RegisterPage: React.FC = () => {
     setIsLoading(true);
     setError('');
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
       console.log('Registration attempt:', { ...formData, acceptTerms, acceptDataProtection });
       
-      // Simulate successful registration
-      const newUser = {
-        id: Date.now().toString(),
+      // Prepare data for API
+      const userData = {
+        nombre: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
-        name: `${formData.firstName} ${formData.lastName}`,
-        role: detectedUserType,
-        membershipType: 'Basic',
-        memberSince: new Date().toISOString().split('T')[0]
+        password: formData.password,
+        telefono: formData.phone,
+        direccion: formData.address
       };
+      
+      // Call real API
+      const response = await usuariosService.register(userData);
+      console.log('User registered successfully:', response.data);
       
       // Clear form data from localStorage after successful registration
       localStorage.removeItem('fitlife_registration_draft');
       
-      // Save user to mock database (in real app, this would be an API call)
-      console.log('User registered:', newUser);
-      
       // Redirect to login page
       navigate('/login');
       
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      setError(error.response?.data?.error || 'Error al registrar usuario. Por favor, inténtalo de nuevo.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const isFormValid = () => {
@@ -151,6 +166,16 @@ export const RegisterPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-secondary-900 text-center mb-8">
             Crear Cuenta
           </h1>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-6">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+                <span className="text-sm text-red-800">{error}</span>
+              </div>
+            </div>
+          )}
 
           {/* User Type Detection */}
           {formData.email && (

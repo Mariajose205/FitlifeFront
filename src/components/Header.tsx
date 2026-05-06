@@ -21,7 +21,6 @@ export const Header: React.FC = () => {
     { name: 'Inicio', href: '/', icon: Home },
     { name: 'Reservas', href: '/reservas', icon: Calendar },
     { name: 'Gimnasios', href: '/gimnasios', icon: MapPin },
-    { name: 'Pagos', href: '/pagos', icon: CreditCard },
     { name: 'Mi Perfil', href: '/perfil', icon: User },
   ];
 
