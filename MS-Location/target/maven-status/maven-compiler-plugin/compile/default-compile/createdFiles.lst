@@ -1,0 +1,5 @@
+com\fitlife\location\controller\LocationController.class
+com\fitlife\location\entity\Location.class
+com\fitlife\location\repository\LocationRepository.class
+com\fitlife\location\MSLocationApplication.class
+com\fitlife\location\service\LocationService.class
