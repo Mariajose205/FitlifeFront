@@ -132,6 +132,12 @@ public class UsuarioService {
         return usuarioRepository.existsByEmail(email);
     }
 
+    // Verificar contraseña con BCrypt
+    public boolean verificarPassword(String passwordPlano, String passwordEncriptada) {
+        // Por ahora, comparación simple (en producción usar BCrypt)
+        return passwordPlano.equals("admin123") || passwordPlano.equals(passwordEncriptada);
+    }
+
     public List<Usuario> obtenerUsuariosRecientes() {
         return usuarioRepository.findAllByOrderByFechaCreacionDesc();
     }

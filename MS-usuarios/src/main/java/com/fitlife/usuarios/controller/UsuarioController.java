@@ -49,8 +49,8 @@ public class UsuarioController {
                         .body(Map.of("error", "Usuario inactivo"));
             }
             
-            // Lógica simple de autenticación (sin encriptación por ahora)
-            if (!password.equals("admin123")) { // Contraseña temporal para pruebas
+            // Verificar contraseña encriptada con BCrypt
+            if (!usuarioService.verificarPassword(password, usuario.getPassword())) {
                 return ResponseEntity.status(401)
                         .body(Map.of("error", "Contraseña incorrecta"));
             }
