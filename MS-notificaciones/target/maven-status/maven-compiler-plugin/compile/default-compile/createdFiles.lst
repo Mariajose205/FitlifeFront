@@ -1,0 +1,6 @@
+com\fitlife\notificaciones\entity\Notificacion.class
+com\fitlife\notificaciones\repository\NotificacionRepository.class
+com\fitlife\notificaciones\MSNotificacionesApplication.class
+com\fitlife\notificaciones\entity\Notificacion$EstadoNotificacion.class
+com\fitlife\notificaciones\service\NotificacionService.class
+com\fitlife\notificaciones\controller\NotificacionController.class

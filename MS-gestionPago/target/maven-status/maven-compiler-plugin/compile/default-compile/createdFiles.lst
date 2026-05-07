@@ -1,0 +1,12 @@
+com\fitlife\pago\repository\PagoRepository.class
+com\fitlife\pago\entity\Tarjeta$TipoTarjeta.class
+com\fitlife\pago\entity\Pago.class
+com\fitlife\pago\service\PagoService.class
+com\fitlife\pago\service\TarjetaService.class
+com\fitlife\pago\entity\Pago$MetodoPago.class
+com\fitlife\pago\controller\PagoController.class
+com\fitlife\pago\controller\TarjetaController.class
+com\fitlife\pago\MSGestionPagoApplication.class
+com\fitlife\pago\repository\TarjetaRepository.class
+com\fitlife\pago\entity\Tarjeta.class
+com\fitlife\pago\entity\Pago$EstadoPago.class
