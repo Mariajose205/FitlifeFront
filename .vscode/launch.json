@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "MSGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.fitlife.gateway.MSGatewayApplication",
+            "projectName": "ms-gateway"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "MSGestionPagoApplication",
+            "request": "launch",
+            "mainClass": "com.fitlife.pago.MSGestionPagoApplication",
+            "projectName": "ms-gestion-pago"
+        },
+        {
+            "type": "java",
+            "name": "MSLocationApplication",
+            "request": "launch",
+            "mainClass": "com.fitlife.location.MSLocationApplication",
+            "projectName": "ms-location"
+        },
+        {
+            "type": "java",
+            "name": "MSNotificacionesApplication",
+            "request": "launch",
+            "mainClass": "com.fitlife.notificaciones.MSNotificacionesApplication",
+            "projectName": "ms-notificaciones"
+        },
+        {
+            "type": "java",
+            "name": "MSReservasApplication",
+            "request": "launch",
+            "mainClass": "com.fitlife.reservas.MSReservasApplication",
+            "projectName": "ms-reservas"
+        },
+        {
+            "type": "java",
+            "name": "MSUsuariosApplication",
+            "request": "launch",
+            "mainClass": "com.fitlife.usuarios.MSUsuariosApplication",
+            "projectName": "ms-usuarios"
+        }
+    ]
+}

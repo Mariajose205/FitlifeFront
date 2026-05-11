@@ -1,0 +1,8 @@
+com\fitlife\usuarios\MSUsuariosApplication.class
+com\fitlife\usuarios\controller\UsuarioController.class
+com\fitlife\usuarios\entity\Usuario.class
+com\fitlife\usuarios\repository\UsuarioRepository.class
+com\fitlife\usuarios\service\UsuarioService.class
+com\fitlife\usuarios\config\SecurityConfig.class
+com\fitlife\usuarios\entity\Usuario$Rol.class
+com\fitlife\usuarios\config\CorsConfig.class

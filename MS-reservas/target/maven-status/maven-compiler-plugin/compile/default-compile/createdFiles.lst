@@ -1,0 +1,6 @@
+com\fitlife\reservas\controller\ReservaController.class
+com\fitlife\reservas\repository\ReservaRepository.class
+com\fitlife\reservas\service\ReservaService.class
+com\fitlife\reservas\entity\Reserva$EstadoReserva.class
+com\fitlife\reservas\MSReservasApplication.class
+com\fitlife\reservas\entity\Reserva.class

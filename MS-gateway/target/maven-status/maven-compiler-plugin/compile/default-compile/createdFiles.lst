@@ -1,0 +1,5 @@
+com\fitlife\gateway\controller\AuthController.class
+com\fitlife\gateway\config\CorsConfig.class
+com\fitlife\gateway\config\WebClientConfig.class
+com\fitlife\gateway\MSGatewayApplication.class
+com\fitlife\gateway\config\JwtUtil.class
