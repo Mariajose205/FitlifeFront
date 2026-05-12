@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MSGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.fitlife.gateway.MSGatewayApplication",
+            "projectName": "ms-gateway"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

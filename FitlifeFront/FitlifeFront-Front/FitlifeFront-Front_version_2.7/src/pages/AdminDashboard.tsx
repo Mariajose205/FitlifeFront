@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { getAuthenticatedUser, logoutUser } from '../utils/userTypeDetection';
+import { usuariosService } from '../services/api';
 // import { locationsService, reservasService, pagosService, notificacionesService } from '../services/api';
 import { 
   Users, 
@@ -65,6 +66,8 @@ export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'classes' | 'revenue' | 'system'>('revenue');
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [loadingUsuarios, setLoadingUsuarios] = useState(false);
   // const [locations, setLocations] = useState<any[]>([]);
   // const [reservas, setReservas] = useState<any[]>([]);
   // const [pagos, setPagos] = useState<any[]>([]);
@@ -96,6 +99,12 @@ export const AdminDashboard: React.FC = () => {
     try {
       // setLoading(true);
       
+      // Cargar usuarios reales
+      setLoadingUsuarios(true);
+      const usuariosResponse = await usuariosService.obtenerTodosLosUsuarios();
+      setUsuarios(usuariosResponse.data);
+      setLoadingUsuarios(false);
+      
       // Cargar locations - API deshabilitada para modo local
       // const locationsResponse = await locationsService.obtenerTodasLasLocations();
       // setLocations(locationsResponse.data);
@@ -108,25 +117,30 @@ export const AdminDashboard: React.FC = () => {
       // const pagosResponse = await pagosService.obtenerTodosLosPagos();
       // setPagos(pagosResponse.data);
       
-      // Calcular estadísticas basadas en datos simulados
-      const totalLocations = 10; // Simulado
-      const activeLocations = 8; // Simulado
+      // Calcular estadísticas basadas en datos reales de usuarios
+      const usuariosData = usuariosResponse.data;
+      const totalUsers = usuariosData.length;
+      const totalTrainers = usuariosData.filter((u: any) => u.rol === 'TRAINER').length;
+      const totalAdmins = usuariosData.filter((u: any) => u.rol === 'ADMIN').length;
+      const totalClients = usuariosData.filter((u: any) => u.rol === 'USER').length;
+      const activeUsers = usuariosData.filter((u: any) => u.activo === true).length;
       
       setStats(prev => ({
         ...prev,
-        totalClients: totalLocations * 25, // Estimado
-        activeClients: activeLocations * 20, // Estimado
-        totalTrainers: totalLocations * 2, // Estimado
-        activeTrainers: activeLocations * 2, // Estimado
-        monthlyRevenue: 15678900,
+        totalClients: totalClients,
+        activeClients: activeUsers - totalTrainers - totalAdmins, // Activos no admin/trainer
+        totalTrainers: totalTrainers,
+        activeTrainers: usuariosData.filter((u: any) => u.rol === 'TRAINER' && u.activo === true).length,
+        monthlyRevenue: 15678900, // Mantener simulado por ahora
         previousMonthRevenue: 14424588,
         totalRevenue: 34164000,
-        classesThisMonth: totalLocations * 5,
+        classesThisMonth: 50, // Mantener simulado
         occupancyRate: 78
       }));
       
     } catch (error) {
       console.error('Error cargando datos del dashboard:', error);
+      setLoadingUsuarios(false);
     } finally {
       // setLoading(false);
     }
@@ -148,10 +162,18 @@ export const AdminDashboard: React.FC = () => {
     alert(`Ver detalles del usuario ID: ${userId}`);
   };
 
-  const handleDeleteUser = (userId: string) => {
+  const handleDeleteUser = async (userId: number) => {
     console.log('Delete user:', userId);
-    if (window.confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-      alert(`Usuario ID: ${userId} eliminado`);
+    if (window.confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')) {
+      try {
+        await usuariosService.eliminarUsuario(userId);
+        // Recargar la lista de usuarios
+        loadDashboardData();
+        alert('Usuario eliminado exitosamente');
+      } catch (error) {
+        console.error('Error eliminando usuario:', error);
+        alert('Error al eliminar el usuario. Por favor, intenta nuevamente.');
+      }
     }
   };
 
@@ -175,10 +197,18 @@ export const AdminDashboard: React.FC = () => {
     alert(`Ver detalles del entrenador ID: ${trainerId}`);
   };
 
-  const handleDeleteTrainer = (trainerId: string) => {
+  const handleDeleteTrainer = async (trainerId: number) => {
     console.log('Delete trainer:', trainerId);
-    if (window.confirm('¿Estás seguro de que deseas eliminar este entrenador?')) {
-      alert(`Entrenador ID: ${trainerId} eliminado`);
+    if (window.confirm('¿Estás seguro de que deseas eliminar este entrenador? Esta acción no se puede deshacer.')) {
+      try {
+        await usuariosService.eliminarUsuario(trainerId);
+        // Recargar la lista de usuarios
+        loadDashboardData();
+        alert('Entrenador eliminado exitosamente');
+      } catch (error) {
+        console.error('Error eliminando entrenador:', error);
+        alert('Error al eliminar el entrenador. Por favor, intenta nuevamente.');
+      }
     }
   };
 
@@ -341,170 +371,211 @@ export const AdminDashboard: React.FC = () => {
     </div>
   );
 
-  const renderClients = () => (
-    <div className="bg-white rounded-lg shadow">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900">Gestión de Clientes</h3>
-          <button className="btn-primary flex items-center gap-2">
-            <UserPlus className="h-4 w-4" />
-            Nuevo Cliente
-          </button>
+  const renderClients = () => {
+    // Filtrar usuarios reales por rol
+    const usuariosClientes = usuarios.filter(u => u.rol === 'USER');
+    
+    return (
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium text-gray-900">Gestión de Clientes</h3>
+            <button className="btn-primary flex items-center gap-2">
+              <UserPlus className="h-4 w-4" />
+              Nuevo Cliente
+            </button>
+          </div>
         </div>
+        {loadingUsuarios ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3 text-gray-600">Cargando usuarios...</span>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Cliente
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Teléfono
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Fecha Registro
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {usuariosClientes.map((usuario) => (
+                  <tr key={usuario.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{usuario.nombre}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">{usuario.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">{usuario.telefono || 'No especificado'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        usuario.activo 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {usuario.activo ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">
+                        {new Date(usuario.fechaCreacion).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleViewUser(usuario.id.toString())}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleEditUser(usuario.id.toString())}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteUser(usuario.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Cliente
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Membresía
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total Gastado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {clients.map((client) => (
-              <tr key={client.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">{client.name}</div>
-                    <div className="text-sm text-gray-500">{client.email}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                    {client.membershipType}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    client.status === 'active' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {client.status === 'active' ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  ${client.totalSpent.toLocaleString('es-CL')}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex gap-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    <button className="text-green-600 hover:text-green-900">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-900">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    );
+  };
 
-  const renderTrainers = () => (
-    <div className="bg-white rounded-lg shadow">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900">Gestión de Entrenadores</h3>
-          <button className="btn-primary flex items-center gap-2">
-            <UserPlus className="h-4 w-4" />
-            Nuevo Entrenador
-          </button>
+  const renderTrainers = () => {
+    // Filtrar usuarios reales por rol
+    const usuariosTrainers = usuarios.filter(u => u.rol === 'TRAINER');
+    
+    return (
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium text-gray-900">Gestión de Entrenadores</h3>
+            <button className="btn-primary flex items-center gap-2">
+              <UserPlus className="h-4 w-4" />
+              Nuevo Entrenador
+            </button>
+          </div>
         </div>
+        {loadingUsuarios ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3 text-gray-600">Cargando usuarios...</span>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Entrenador
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Teléfono
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Fecha Registro
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {usuariosTrainers.map((trainer) => (
+                  <tr key={trainer.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{trainer.nombre}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">{trainer.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">{trainer.telefono || 'No especificado'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        trainer.activo 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {trainer.activo ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">
+                        {new Date(trainer.fechaCreacion).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleViewTrainer(trainer.id.toString())}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleEditTrainer(trainer.id.toString())}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteTrainer(trainer.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Entrenador
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Especialidad
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Clases/Mes
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Rating
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {trainers.map((trainer) => (
-              <tr key={trainer.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">{trainer.name}</div>
-                    <div className="text-sm text-gray-500">{trainer.email}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {trainer.specialty}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {trainer.classesCount}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-900">{trainer.rating}</span>
-                    <span className="text-yellow-400 ml-1">★</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    trainer.status === 'active' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {trainer.status === 'active' ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex gap-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    <button className="text-green-600 hover:text-green-900">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-900">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderClasses = () => (
     <div className="bg-white rounded-lg shadow">
@@ -922,74 +993,89 @@ export const AdminDashboard: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Usuario
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Rol
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {clients.map((client) => (
-              <tr key={client.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">{client.name}</div>
-                    <div className="text-sm text-gray-500">{client.email}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                    Cliente
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    client.status === 'active' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {client.status === 'active' ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => handleViewUser(client.id)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    <button 
-                      onClick={() => handleEditUser(client.id)}
-                      className="text-green-600 hover:text-green-900"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteUser(client.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
+      {loadingUsuarios ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-3 text-gray-600">Cargando usuarios...</span>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Usuario
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Rol
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Acciones
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {usuarios.map((usuario) => (
+                <tr key={usuario.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{usuario.nombre}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">{usuario.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      usuario.rol === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
+                      usuario.rol === 'TRAINER' ? 'bg-blue-100 text-blue-800' :
+                      'bg-green-100 text-green-800'
+                    }`}>
+                      {usuario.rol === 'ADMIN' ? 'Administrador' : 
+                       usuario.rol === 'TRAINER' ? 'Entrenador' : 'Cliente'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      usuario.activo 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {usuario.activo ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleViewUser(usuario.id.toString())}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleEditUser(usuario.id.toString())}
+                        className="text-green-600 hover:text-green-900"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteUser(Number(usuario.id))}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 

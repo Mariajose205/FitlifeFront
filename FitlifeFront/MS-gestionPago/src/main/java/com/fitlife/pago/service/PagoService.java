@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fitlife.pago.client.ReservaClient;
 import com.fitlife.pago.entity.Pago;
 import com.fitlife.pago.repository.PagoRepository;
 
@@ -22,6 +23,9 @@ public class PagoService {
 
     @Autowired
     private PagoRepository pagoRepository;
+
+    @Autowired
+    private ReservaClient reservaClient;
 
     // Temporalmente comentado hasta que el IDE reconozca la clase
     // @Autowired
@@ -85,6 +89,20 @@ public class PagoService {
                     if (procesamientoExitoso) {
                         String codigoAutorizacion = generateAuthCode();
                         pago.confirmarPago(pago.getIdTransaccion(), codigoAutorizacion);
+                        
+                        // Confirmar la reserva en el microservicio de reservas
+                        if (pago.getIdReserva() != null) {
+                            logger.info("🔄 Intentando confirmar reserva {} tras pago exitoso", pago.getIdReserva());
+                            boolean reservaConfirmada = reservaClient.confirmarReserva(pago.getIdReserva());
+                            
+                            if (reservaConfirmada) {
+                                logger.info("✅ Reserva {} confirmada exitosamente", pago.getIdReserva());
+                            } else {
+                                logger.warn("⚠️ No se pudo confirmar la reserva {} en MS-reservas", pago.getIdReserva());
+                            }
+                        } else {
+                            logger.warn("⚠️ Pago {} no tiene ID de reserva asociado", id);
+                        }
                         
                         // TODO: Publicar eventos de pago exitoso cuando PagoEventPublisher esté disponible
                         // String emailUsuario = obtenerEmailUsuario(pago.getIdUsuario());
