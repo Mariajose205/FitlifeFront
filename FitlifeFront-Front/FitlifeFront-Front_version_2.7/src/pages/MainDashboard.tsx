@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { Dumbbell, Calendar, MapPin, Users, Clock, Filter, Search, Star } from 'lucide-react';
+import boxeoImage from '../assets/Imagenes/Boxeo.png';
+import pilatesImage from '../assets/Imagenes/pilates.png';
 
 export const MainDashboard: React.FC = () => {
   const [selectedGym, setSelectedGym] = useState<string>('all');
@@ -36,9 +38,9 @@ export const MainDashboard: React.FC = () => {
   const classes = [
     { id: '1', name: 'Yoga Flow', trainer: 'María González', gym: 'FitLife Vitacura', date: '2024-01-15', time: '08:00 AM', duration: '60 min', spots: 15, maxSpots: 20, level: 'Principiante' },
     { id: '2', name: 'Spinning Intensivo', trainer: 'Ana Martínez', gym: 'FitLife Las Condes', date: '2024-01-15', time: '06:00 PM', duration: '45 min', spots: 8, maxSpots: 25, level: 'Intermedio' },
-    { id: '3', name: 'Boxing', trainer: 'Pedro Sánchez', gym: 'FitLife Providencia', date: '2024-01-16', time: '07:00 PM', duration: '50 min', spots: 12, maxSpots: 15, level: 'Avanzado', image: '/src/assets/imagenes/boxeo.png' },
+    { id: '3', name: 'Boxing', trainer: 'Pedro Sánchez', gym: 'FitLife Providencia', date: '2024-01-16', time: '07:00 PM', duration: '50 min', spots: 12, maxSpots: 15, level: 'Avanzado', image: boxeoImage },
     { id: '4', name: 'Entrenamiento Funcional', trainer: 'Carlos Rodríguez', gym: 'FitLife Ñuñoa', date: '2024-01-16', time: '10:00 AM', duration: '60 min', spots: 18, maxSpots: 20, level: 'Intermedio' },
-    { id: '5', name: 'Pilates Reformer', trainer: 'Laura Silva', gym: 'FitLife La Florida', date: '2024-01-17', time: '09:00 AM', duration: '55 min', spots: 10, maxSpots: 12, level: 'Principiante', image: '/src/assets/imagenes/pilates.png' },
+    { id: '5', name: 'Pilates Reformer', trainer: 'Laura Silva', gym: 'FitLife La Florida', date: '2024-01-17', time: '09:00 AM', duration: '55 min', spots: 10, maxSpots: 12, level: 'Principiante', image: pilatesImage },
     { id: '6', name: 'Zumba Fitness', trainer: 'Sofía Valdés', gym: 'FitLife Maipú', date: '2024-01-17', time: '06:00 PM', duration: '60 min', spots: 20, maxSpots: 30, level: 'Principiante' },
     { id: '7', name: 'Natación', trainer: 'Matías Castro', gym: 'FitLife San Miguel', date: '2024-01-18', time: '07:00 AM', duration: '45 min', spots: 15, maxSpots: 20, level: 'Intermedio' },
     { id: '8', name: 'Power Lifting', trainer: 'Diego Torres', gym: 'FitLife La Reina', date: '2024-01-18', time: '05:00 PM', duration: '75 min', spots: 8, maxSpots: 12, level: 'Avanzado' },

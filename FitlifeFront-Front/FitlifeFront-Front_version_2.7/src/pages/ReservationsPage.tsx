@@ -5,6 +5,8 @@ import { useRole } from '../contexts/RoleContext';
 import { reservasService } from '../services/api';
 import { getAuthenticatedUser } from '../utils/userTypeDetection';
 import { Search, Filter, Users, MapPin, Calendar, Clock, Star, Plus, Minus, Trash2, ChevronRight, AlertCircle } from 'lucide-react';
+import boxeoImage from '../assets/Imagenes/Boxeo.png';
+import pilatesImage from '../assets/Imagenes/pilates.png';
 
 interface Class {
   id: string;
@@ -74,7 +76,7 @@ export const ReservationsPage: React.FC = () => {
       time: '07:00 PM',
       duration: '60 min',
       price: 18000,
-      image: '/src/assets/imagenes/boxeo.png',
+      image: boxeoImage,
       level: 'intermediate',
       enrolled: 12,
       maxSpots: 18,
@@ -89,7 +91,7 @@ export const ReservationsPage: React.FC = () => {
       time: '08:00 AM',
       duration: '55 min',
       price: 20000,
-      image: '/src/assets/imagenes/pilates.png',
+      image: pilatesImage,
       level: 'beginner',
       enrolled: 10,
       maxSpots: 15,
@@ -127,8 +129,21 @@ export const ReservationsPage: React.FC = () => {
         // Intentar diferentes formatos de fecha
         let classDateTime;
         try {
-          // Formato ISO: YYYY-MM-DDTHH:mm
-          classDateTime = new Date(`${selectedClass.date}T${selectedClass.time}`);
+          // Formato con AM/PM: HH:mm AM/PM
+          if (selectedClass.time.includes('AM') || selectedClass.time.includes('PM')) {
+            const [timeStr, period] = selectedClass.time.trim().split(' ');
+            const [hours, minutes] = timeStr.split(':');
+            let hour = parseInt(hours);
+            if (period === 'PM' && hour !== 12) {
+              hour += 12;
+            } else if (period === 'AM' && hour === 12) {
+              hour = 0;
+            }
+            classDateTime = new Date(`${selectedClass.date}T${hour.toString().padStart(2, '0')}:${minutes}`);
+          } else {
+            // Formato ISO: YYYY-MM-DDTHH:mm
+            classDateTime = new Date(`${selectedClass.date}T${selectedClass.time}`);
+          }
           
           // Si es inválido, intentar otros formatos
           if (isNaN(classDateTime.getTime())) {
@@ -149,16 +164,30 @@ export const ReservationsPage: React.FC = () => {
         }
         
         console.log('Fecha parseada:', classDateTime);
-        
+
+        // Validar que los IDs sean números válidos
+        const idUsuario = parseInt(currentUser.id);
+        const idHorario = parseInt(selectedClass.id);
+
+        if (isNaN(idUsuario) || isNaN(idHorario)) {
+          console.error('IDs inválidos:', { idUsuario, idHorario, currentUser, selectedClass });
+          alert('Error: IDs de usuario o clase inválidos');
+          return;
+        }
+
         const reservaRequest = {
-          idUsuario: parseInt(currentUser.id),
-          idHorario: parseInt(selectedClass.id), // Usando el ID de la clase como ID de horario
+          idUsuario: idUsuario,
+          idHorario: idHorario, // Usando el ID de la clase como ID de horario
           idLocation: 1, // ID de location por defecto (debería venir de la clase)
           fechaReserva: new Date().toISOString(),
           fechaClase: classDateTime.toISOString(),
           estado: 'PENDIENTE',
           numeroPersonas: 1
         };
+
+        console.log('Datos de la reserva a enviar:', JSON.stringify(reservaRequest, null, 2));
+        console.log('currentUser:', currentUser);
+        console.log('selectedClass:', selectedClass);
 
         const response = await reservasService.crearReserva(reservaRequest);
         const reservaCreada = response.data;

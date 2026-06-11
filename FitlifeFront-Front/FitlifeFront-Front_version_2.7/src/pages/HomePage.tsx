@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { useDiscount } from '../contexts/DiscountContext';
 import { Dumbbell, Shield, MapPin, Calendar, Users, Clock, ChevronLeft, ChevronRight, Tag, CreditCard } from 'lucide-react';
+import boxeoImage from '../assets/Imagenes/Boxeo.png';
+import fondoOfertaImage from '../assets/Imagenes/fondo-oferta.jpg';
 
 export const HomePage: React.FC = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -70,7 +72,7 @@ export const HomePage: React.FC = () => {
     {
       id: 3,
       name: 'Boxing',
-      image: '/src/assets/imagenes/boxeo.png',
+      image: boxeoImage,
       location: 'Ring Principal',
       time: '07:00 PM',
       duration: '60 min',
@@ -107,7 +109,7 @@ export const HomePage: React.FC = () => {
           <img
             src={currentSlideIndex === 0 
               ? "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&h=600&fit=crop"
-              : "/src/assets/imagenes/fondo-oferta.jpg"
+              : fondoOfertaImage
             }
             alt={currentSlideIndex === 0 ? "People exercising" : "Special offer"}
             className="w-full h-full object-cover opacity-30"
