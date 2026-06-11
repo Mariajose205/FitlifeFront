@@ -313,11 +313,13 @@ export const RegisterPage: React.FC = () => {
                   name="birthDate"
                   type="date"
                   required
+                  max={new Date().toISOString().split('T')[0]}
                   value={formData.birthDate}
                   onChange={handleInputChange}
                   className="input-field pl-10"
                 />
               </div>
+              <p className="text-xs text-secondary-500 mt-1">Selecciona tu fecha de nacimiento del calendario</p>
             </div>
 
             {/* Address */}
@@ -357,6 +359,7 @@ export const RegisterPage: React.FC = () => {
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     required
+                    minLength={8}
                     value={formData.password}
                     onChange={handleInputChange}
                     className="input-field pl-10 pr-10"
@@ -374,6 +377,7 @@ export const RegisterPage: React.FC = () => {
                     )}
                   </button>
                 </div>
+                <p className="text-xs text-secondary-500 mt-1">La contraseña debe tener al menos 8 caracteres</p>
               </div>
 
               {/* Confirm Password */}
