@@ -1,5 +1,6 @@
 package com.fitlife.reservas.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
@@ -16,34 +17,42 @@ public class Reserva {
 
     @NotNull(message = "El ID de usuario es obligatorio")
     @Column(name = "id_usuario", nullable = false)
+    @JsonProperty("idUsuario")
     private Long idUsuario;
 
     @NotNull(message = "El ID de horario es obligatorio")
     @Column(name = "id_horario", nullable = false)
+    @JsonProperty("idHorario")
     private Long idHorario;
 
     @NotNull(message = "El ID de location es obligatorio")
     @Column(name = "id_location", nullable = false)
+    @JsonProperty("idLocation")
     private Long idLocation;
 
     @NotNull(message = "La fecha de reserva es obligatoria")
     @Column(name = "fecha_reserva", nullable = false)
+    @JsonProperty("fechaReserva")
     private LocalDateTime fechaReserva;
 
     @NotNull(message = "La fecha de clase es obligatoria")
     @Column(name = "fecha_clase", nullable = false)
+    @JsonProperty("fechaClase")
     private LocalDateTime fechaClase;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    @JsonProperty("estado")
     private EstadoReserva estado = EstadoReserva.ACTIVA;
 
     @Min(value = 1, message = "El número de personas debe ser al menos 1")
     @Max(value = 50, message = "El número de personas no puede exceder 50")
     @Column(name = "numero_personas", nullable = false)
+    @JsonProperty("numeroPersonas")
     private Integer numeroPersonas = 1;
 
     @Column(name = "monto_total")
+    @JsonProperty("montoTotal")
     private Double montoTotal;
 
     @Column(name = "fecha_creacion", nullable = false, updatable = false)

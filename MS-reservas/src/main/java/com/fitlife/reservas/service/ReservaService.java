@@ -20,17 +20,6 @@ public class ReservaService {
 
     // CRUD básico
     public Reserva crearReserva(Reserva reserva) {
-        // Validar que no exista una reserva duplicada
-        long duplicadas = reservaRepository.countReservasDuplicadas(
-            reserva.getIdUsuario(), 
-            reserva.getIdHorario(), 
-            reserva.getFechaClase()
-        );
-        
-        if (duplicadas > 0) {
-            throw new RuntimeException("Ya existe una reserva activa para este usuario en este horario y fecha");
-        }
-        
         // Validar que la fecha de clase sea futura
         if (reserva.getFechaClase().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("La fecha de clase no puede ser en el pasado");

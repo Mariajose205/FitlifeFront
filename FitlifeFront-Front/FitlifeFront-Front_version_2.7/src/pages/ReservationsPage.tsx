@@ -42,7 +42,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Spinning Intensivo',
       instructor: 'María González',
       gym: 'FitLife Vitacura',
-      date: '2024-05-02',
+      date: '2026-06-20',
       time: '06:00 PM',
       duration: '50 min',
       price: 12000,
@@ -57,7 +57,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Entrenamiento Funcional',
       instructor: 'Carlos Rodríguez',
       gym: 'FitLife Las Condes',
-      date: '2024-05-02',
+      date: '2026-06-21',
       time: '10:00 AM',
       duration: '45 min',
       price: 15000,
@@ -72,7 +72,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Boxing',
       instructor: 'Pedro Silva',
       gym: 'FitLife Providencia',
-      date: '2024-05-03',
+      date: '2026-06-22',
       time: '07:00 PM',
       duration: '60 min',
       price: 18000,
@@ -87,7 +87,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Pilates',
       instructor: 'Ana Martínez',
       gym: 'FitLife Vitacura',
-      date: '2024-05-03',
+      date: '2026-06-23',
       time: '08:00 AM',
       duration: '55 min',
       price: 20000,
@@ -181,7 +181,6 @@ export const ReservationsPage: React.FC = () => {
           idLocation: 1, // ID de location por defecto (debería venir de la clase)
           fechaReserva: new Date().toISOString(),
           fechaClase: classDateTime.toISOString(),
-          estado: 'PENDIENTE',
           numeroPersonas: 1
         };
 
@@ -301,7 +300,6 @@ export const ReservationsPage: React.FC = () => {
           idLocation: 1,
           fechaReserva: new Date().toISOString(),
           fechaClase: classDateTime.toISOString(),
-          estado: 'PENDIENTE',
           numeroPersonas: 1
         };
 

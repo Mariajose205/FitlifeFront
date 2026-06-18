@@ -7,28 +7,8 @@ export default defineConfig({
   server: {
     port: 5174,
     proxy: {
-      '/api/usuarios': {
-        target: 'http://localhost:8085',
-        changeOrigin: true,
-        rewrite: (path) => path
-      },
-      '/api/pagos': {
-        target: 'http://localhost:8086',
-        changeOrigin: true,
-        rewrite: (path) => path
-      },
-      '/api/locations': {
-        target: 'http://localhost:8087',
-        changeOrigin: true,
-        rewrite: (path) => path
-      },
-      '/api/reservas': {
-        target: 'http://localhost:8083',
-        changeOrigin: true,
-        rewrite: (path) => path
-      },
-      '/api/notificaciones': {
-        target: 'http://localhost:8083',
+      '/api': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
         rewrite: (path) => path
       }
