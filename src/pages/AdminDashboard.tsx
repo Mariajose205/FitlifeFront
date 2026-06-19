@@ -685,7 +685,7 @@ export const AdminDashboard: React.FC = () => {
 
   const renderBranches = () => {
     // Usar datos reales del servicio de locations
-    const branches = locations.map(location => ({
+    const branches = location.map(location => ({
       id: location.id.toString(),
       name: location.nombre,
       address: location.direccion,

@@ -14,4 +14,14 @@ export default defineConfig({
       }
     }
   },
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'MODULE_RESOLVE') {
+          return
+        }
+        warn(warning)
+      }
+    }
+  }
 })
