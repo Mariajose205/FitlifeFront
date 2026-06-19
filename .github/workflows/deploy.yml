@@ -46,8 +46,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/fitlife-frontend:latest
             ${{ secrets.DOCKER_USERNAME }}/fitlife-frontend:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/fitlife-frontend:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/fitlife-frontend:buildcache,mode=max
 
   deploy:
     needs: build
