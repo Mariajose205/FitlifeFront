@@ -684,19 +684,45 @@ export const AdminDashboard: React.FC = () => {
   );
 
   const renderBranches = () => {
-    // Usar datos reales del servicio de locations
-    const branches = location.map(location => ({
-      id: location.id.toString(),
-      name: location.nombre,
-      address: location.direccion,
-      phone: '+56 2 2345 6789', // Podría agregarse phone al entity
-      email: `${location.nombre.toLowerCase().replace(/\s+/g, '')}@fitlife.cl`,
-      manager: 'Gerente Asignado', // Podría agregarse manager al entity
-      clients: location.capacidadActual || 0,
-      trainers: Math.floor((location.capacidadMaxima || 20) / 10), // Estimado
-      status: location.activa ? 'active' : 'maintenance',
-      openDate: '2023-01-15' // Podría agregarse fecha al entity
-    }));
+    // Usar datos mockeados para branches
+    const branches = [
+      {
+        id: '1',
+        name: 'Fitlife Centro',
+        address: 'Av. Providencia 1234, Santiago',
+        phone: '+56 2 2345 6789',
+        email: 'centro@fitlife.cl',
+        manager: 'Gerente Asignado',
+        clients: 150,
+        trainers: 15,
+        status: 'active',
+        openDate: '2023-01-15'
+      },
+      {
+        id: '2',
+        name: 'Fitlife Norte',
+        address: 'Av. Las Condes 5678, Santiago',
+        phone: '+56 2 2345 6790',
+        email: 'norte@fitlife.cl',
+        manager: 'Gerente Asignado',
+        clients: 200,
+        trainers: 20,
+        status: 'active',
+        openDate: '2023-03-20'
+      },
+      {
+        id: '3',
+        name: 'Fitlife Sur',
+        address: 'Av. Vicuña Mackenna 9012, Santiago',
+        phone: '+56 2 2345 6791',
+        email: 'sur@fitlife.cl',
+        manager: 'Gerente Asignado',
+        clients: 120,
+        trainers: 12,
+        status: 'maintenance',
+        openDate: '2023-06-10'
+      }
+    ];
 
     return (
       <div className="bg-white rounded-lg shadow">
