@@ -269,8 +269,21 @@ export const ReservationsPage: React.FC = () => {
         // Intentar diferentes formatos de fecha
         let classDateTime;
         try {
-          // Formato ISO: YYYY-MM-DDTHH:mm
-          classDateTime = new Date(`${item.date}T${item.time}`);
+          // Formato con AM/PM: HH:mm AM/PM
+          if (item.time.includes('AM') || item.time.includes('PM')) {
+            const [timeStr, period] = item.time.trim().split(' ');
+            const [hours, minutes] = timeStr.split(':');
+            let hour = parseInt(hours);
+            if (period === 'PM' && hour !== 12) {
+              hour += 12;
+            } else if (period === 'AM' && hour === 12) {
+              hour = 0;
+            }
+            classDateTime = new Date(`${item.date}T${hour.toString().padStart(2, '0')}:${minutes}`);
+          } else {
+            // Formato ISO: YYYY-MM-DDTHH:mm
+            classDateTime = new Date(`${item.date}T${item.time}`);
+          }
           
           // Si es inválido, intentar otros formatos
           if (isNaN(classDateTime.getTime())) {
