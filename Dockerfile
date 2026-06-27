@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps
 COPY . .
-RUN npx vite build
+RUN npm run build
 
 # Stage 2: Serve with nginx
 FROM nginx:alpine

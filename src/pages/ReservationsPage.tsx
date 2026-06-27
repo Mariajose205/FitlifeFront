@@ -5,8 +5,6 @@ import { useRole } from '../contexts/RoleContext';
 import { reservasService } from '../services/api';
 import { getAuthenticatedUser } from '../utils/userTypeDetection';
 import { Search, Filter, Users, MapPin, Calendar, Clock, Star, Plus, Minus, Trash2, ChevronRight, AlertCircle } from 'lucide-react';
-import boxeoImage from '../assets/Imagenes/Boxeo.png';
-import pilatesImage from '../assets/Imagenes/pilates.png';
 
 interface Class {
   id: string;
@@ -42,7 +40,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Spinning Intensivo',
       instructor: 'María González',
       gym: 'FitLife Vitacura',
-      date: '2026-06-20',
+      date: '2026-07-15',
       time: '06:00 PM',
       duration: '50 min',
       price: 12000,
@@ -57,7 +55,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Entrenamiento Funcional',
       instructor: 'Carlos Rodríguez',
       gym: 'FitLife Las Condes',
-      date: '2026-06-21',
+      date: '2026-07-20',
       time: '10:00 AM',
       duration: '45 min',
       price: 15000,
@@ -72,11 +70,11 @@ export const ReservationsPage: React.FC = () => {
       name: 'Boxing',
       instructor: 'Pedro Silva',
       gym: 'FitLife Providencia',
-      date: '2026-06-22',
+      date: '2026-07-25',
       time: '07:00 PM',
       duration: '60 min',
       price: 18000,
-      image: boxeoImage,
+      image: 'https://images.unsplash.com/photo-1549719386-74dfc44173b5?w=400&h=300&fit=crop',
       level: 'intermediate',
       enrolled: 12,
       maxSpots: 18,
@@ -87,11 +85,11 @@ export const ReservationsPage: React.FC = () => {
       name: 'Pilates',
       instructor: 'Ana Martínez',
       gym: 'FitLife Vitacura',
-      date: '2026-06-23',
+      date: '2026-07-30',
       time: '08:00 AM',
       duration: '55 min',
       price: 20000,
-      image: pilatesImage,
+      image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop',
       level: 'beginner',
       enrolled: 10,
       maxSpots: 15,
