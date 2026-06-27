@@ -282,27 +282,31 @@ export const ReservationsPage: React.FC = () => {
             // Parsear fecha YYYY-MM-DD
             const [year, month, day] = item.date.split('-');
             classDateTime = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), hour, parseInt(minutes));
+            console.log('Fecha parseada con AM/PM:', classDateTime);
           } else {
             // Formato ISO: YYYY-MM-DDTHH:mm
             classDateTime = new Date(`${item.date}T${item.time}`);
+            console.log('Fecha parseada con formato ISO:', classDateTime);
           }
           
-          // Si es inválido, intentar otros formatos
+          // Verificar si la fecha es válida
           if (isNaN(classDateTime.getTime())) {
+            console.warn('Fecha inválida, intentando formato alternativo');
             // Formato: DD/MM/YYYY HH:mm
             const [day, month, year] = item.date.split('/');
             const [hours, minutes] = item.time.split(':');
             classDateTime = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
+            console.log('Fecha parseada con formato alternativo:', classDateTime);
           }
           
-          // Si sigue siendo inválido, usar fecha actual
+          // Si sigue siendo inválido, usar fecha futura por defecto
           if (isNaN(classDateTime.getTime())) {
-            console.warn('Fecha inválida, usando fecha actual');
-            classDateTime = new Date();
+            console.warn('Fecha inválida, usando fecha futura por defecto');
+            classDateTime = new Date(2026, 6, 15, 18, 0); // 15 de julio 2026, 6:00 PM
           }
         } catch (e) {
           console.error('Error al parsear fecha:', e);
-          classDateTime = new Date();
+          classDateTime = new Date(2026, 6, 15, 18, 0); // 15 de julio 2026, 6:00 PM
         }
         
         console.log('Fecha parseada:', classDateTime);
