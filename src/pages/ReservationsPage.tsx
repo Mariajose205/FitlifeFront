@@ -279,7 +279,9 @@ export const ReservationsPage: React.FC = () => {
             } else if (period === 'AM' && hour === 12) {
               hour = 0;
             }
-            classDateTime = new Date(`${item.date}T${hour.toString().padStart(2, '0')}:${minutes}`);
+            // Parsear fecha YYYY-MM-DD
+            const [year, month, day] = item.date.split('-');
+            classDateTime = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), hour, parseInt(minutes));
           } else {
             // Formato ISO: YYYY-MM-DDTHH:mm
             classDateTime = new Date(`${item.date}T${item.time}`);
