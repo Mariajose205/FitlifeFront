@@ -35,6 +35,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -43,6 +46,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/fitlife-frontend:latest
             ${{ secrets.DOCKER_USERNAME }}/fitlife-frontend:${{ github.sha }}
+          timeout: 1800000
 
   deploy:
     needs: build
