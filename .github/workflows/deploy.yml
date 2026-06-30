@@ -67,7 +67,7 @@ jobs:
             
             services:
               frontend:
-                image: Mariajose205/fitlife-frontend:latest
+                image: mariacarrero/fitlife-frontend:latest
                 container_name: fitlife-frontend
                 ports:
                   - "80:80"
