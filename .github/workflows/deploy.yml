@@ -62,6 +62,17 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ec2-user
+            cat > docker-compose.frontend.yml << 'EOF'
+            version: '3.8'
+            
+            services:
+              frontend:
+                image: Mariajose205/fitlife-frontend:latest
+                container_name: fitlife-frontend
+                ports:
+                  - "80:80"
+                restart: always
+            EOF
             docker compose -f docker-compose.frontend.yml pull
             docker compose -f docker-compose.frontend.yml up -d
             docker image prune -f
