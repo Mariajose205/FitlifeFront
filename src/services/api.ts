@@ -1,12 +1,13 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-// Base URLs para los microservicios - Usando proxy de Vite
+// Base URLs para los microservicios - Apuntando al backend en AWS
+const BACKEND_URL = 'http://52.1.222.152:8080';
 const BASE_URLS = {
-  pagos: '/api/pagos',
-  locations: '/api/locations',
-  reservas: '/api/reservas',
-  notificaciones: '/api/notificaciones',
-  usuarios: '/api/usuarios' // Usando proxy a MS-usuarios
+  pagos: `${BACKEND_URL}/api/pagos`,
+  locations: `${BACKEND_URL}/api/locations`,
+  reservas: `${BACKEND_URL}/api/reservas`,
+  notificaciones: `${BACKEND_URL}/api/notificaciones`,
+  usuarios: `${BACKEND_URL}/api/usuarios`
 };
 
 // Configuración común para Axios
