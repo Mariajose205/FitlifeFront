@@ -13,7 +13,9 @@ import {
   Activity,
   TrendingUp,
   Settings,
-  LogOut
+  LogOut,
+  X,
+  Image
 } from 'lucide-react';
 
 interface Student {
@@ -28,16 +30,39 @@ interface Student {
 interface ClassSchedule {
   id: string;
   name: string;
+  instructor: string;
+  gym: string;
   date: string;
   time: string;
+  duration: string;
+  price: number;
+  image: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
   enrolled: number;
-  capacity: number;
+  maxSpots: number;
+  description: string;
 }
 
 export const TrainerDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'classes' | 'students' | 'profile'>('dashboard');
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [showNewClassModal, setShowNewClassModal] = useState(false);
+  const [classes, setClasses] = useState<ClassSchedule[]>([]);
+  const [newClass, setNewClass] = useState<Partial<ClassSchedule>>({
+    name: '',
+    instructor: '',
+    gym: '',
+    date: '',
+    time: '',
+    duration: '',
+    price: 0,
+    image: '',
+    level: 'beginner',
+    enrolled: 0,
+    maxSpots: 20,
+    description: ''
+  });
   // const [locations, setLocations] = useState<any[]>([]);
   // const [reservas, setReservas] = useState<any[]>([]);
   // const [loading, setLoading] = useState(true);
@@ -46,6 +71,65 @@ export const TrainerDashboard: React.FC = () => {
   useEffect(() => {
     const user = getAuthenticatedUser();
     setCurrentUser(user);
+  }, []);
+
+  // Cargar clases desde localStorage
+  useEffect(() => {
+    const savedClasses = localStorage.getItem('trainerClasses');
+    if (savedClasses) {
+      setClasses(JSON.parse(savedClasses));
+    } else {
+      // Mock data inicial
+      const initialClasses: ClassSchedule[] = [
+        {
+          id: '1',
+          name: 'Entrenamiento Funcional',
+          instructor: 'Juan Entrenador',
+          gym: 'FitLife Vitacura',
+          date: '2024-05-06',
+          time: '08:00',
+          duration: '45 min',
+          price: 15000,
+          image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop',
+          level: 'intermediate',
+          enrolled: 15,
+          maxSpots: 20,
+          description: 'Entrenamiento funcional que trabaja todos los grupos musculares.'
+        },
+        {
+          id: '2',
+          name: 'Musculación',
+          instructor: 'Juan Entrenador',
+          gym: 'FitLife Las Condes',
+          date: '2024-05-06',
+          time: '10:00',
+          duration: '60 min',
+          price: 12000,
+          image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+          level: 'advanced',
+          enrolled: 18,
+          maxSpots: 20,
+          description: 'Sesión de musculación con equipamiento completo.'
+        },
+        {
+          id: '3',
+          name: 'Spinning',
+          instructor: 'Juan Entrenador',
+          gym: 'FitLife Providencia',
+          date: '2024-05-06',
+          time: '18:00',
+          duration: '50 min',
+          price: 10000,
+          image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+          level: 'beginner',
+          enrolled: 12,
+          maxSpots: 15,
+          description: 'Clase de spinning de alta intensidad.'
+        }
+      ];
+      setClasses(initialClasses);
+      localStorage.setItem('trainerClasses', JSON.stringify(initialClasses));
+    }
   }, []);
 
   // Cargar datos de microservicios
@@ -89,6 +173,10 @@ export const TrainerDashboard: React.FC = () => {
     alert(`Ver detalles de la clase ID: ${classId}`);
   };
 
+  const handleAddClass = () => {
+    setShowNewClassModal(true);
+  };
+
   // Mock data
   const stats = {
     totalClasses: 24,
@@ -130,33 +218,6 @@ export const TrainerDashboard: React.FC = () => {
       membershipType: 'Básico',
       progress: 45,
       lastClass: '2024-05-02'
-    }
-  ];
-
-  const classes: ClassSchedule[] = [
-    {
-      id: '1',
-      name: 'Entrenamiento Funcional',
-      date: '2024-05-06',
-      time: '08:00',
-      enrolled: 15,
-      capacity: 20
-    },
-    {
-      id: '2',
-      name: 'Musculación',
-      date: '2024-05-06',
-      time: '10:00',
-      enrolled: 18,
-      capacity: 20
-    },
-    {
-      id: '3',
-      name: 'Spinning',
-      date: '2024-05-06',
-      time: '18:00',
-      enrolled: 12,
-      capacity: 15
     }
   ];
 
@@ -213,7 +274,7 @@ export const TrainerDashboard: React.FC = () => {
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-gray-900">Mis Clases</h3>
-          <button className="btn-primary flex items-center gap-2">
+          <button onClick={handleAddClass} className="btn-primary flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Nueva Clase
           </button>
@@ -257,11 +318,11 @@ export const TrainerDashboard: React.FC = () => {
                     <div className="flex-1 bg-gray-200 rounded-full h-2 mr-2">
                       <div 
                         className="bg-blue-600 h-2 rounded-full" 
-                        style={{ width: `${(classItem.enrolled / classItem.capacity) * 100}%` }}
+                        style={{ width: `${(classItem.enrolled / classItem.maxSpots) * 100}%` }}
                       ></div>
                     </div>
                     <span className="text-sm text-gray-900">
-                      {classItem.enrolled}/{classItem.capacity}
+                      {classItem.enrolled}/{classItem.maxSpots}
                     </span>
                   </div>
                 </td>

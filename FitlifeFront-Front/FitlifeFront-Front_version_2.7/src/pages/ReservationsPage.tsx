@@ -35,6 +35,15 @@ export const ReservationsPage: React.FC = () => {
   const { currentUser } = useRole();
   const { items, addItem, removeItem, updateQuantity, clearCart, getTotal } = useCart();
 
+  // Calcular fechas dinámicas (un mes en el futuro)
+  const today = new Date();
+  const nextMonth = new Date(today);
+  nextMonth.setMonth(today.getMonth() + 1);
+  
+  const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0];
+  };
+
   // Mock classes data
   const classes: Class[] = [
     {
@@ -42,7 +51,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Spinning Intensivo',
       instructor: 'María González',
       gym: 'FitLife Vitacura',
-      date: '2026-06-20',
+      date: formatDate(new Date(nextMonth.getTime() + 0 * 24 * 60 * 60 * 1000)),
       time: '06:00 PM',
       duration: '50 min',
       price: 12000,
@@ -57,7 +66,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Entrenamiento Funcional',
       instructor: 'Carlos Rodríguez',
       gym: 'FitLife Las Condes',
-      date: '2026-06-21',
+      date: formatDate(new Date(nextMonth.getTime() + 1 * 24 * 60 * 60 * 1000)),
       time: '10:00 AM',
       duration: '45 min',
       price: 15000,
@@ -72,7 +81,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Boxing',
       instructor: 'Pedro Silva',
       gym: 'FitLife Providencia',
-      date: '2026-06-22',
+      date: formatDate(new Date(nextMonth.getTime() + 2 * 24 * 60 * 60 * 1000)),
       time: '07:00 PM',
       duration: '60 min',
       price: 18000,
@@ -87,7 +96,7 @@ export const ReservationsPage: React.FC = () => {
       name: 'Pilates',
       instructor: 'Ana Martínez',
       gym: 'FitLife Vitacura',
-      date: '2026-06-23',
+      date: formatDate(new Date(nextMonth.getTime() + 3 * 24 * 60 * 60 * 1000)),
       time: '08:00 AM',
       duration: '55 min',
       price: 20000,
